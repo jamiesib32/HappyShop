@@ -40,6 +40,7 @@ public class CustomerClient extends Application {
         cusView.cusController = cusController;
         cusController.cusModel = cusModel;
         cusModel.cusView = cusView;
+
         cusView.start(window);
 
         // Optional feature: Handling Stock Shortages at Checkout.

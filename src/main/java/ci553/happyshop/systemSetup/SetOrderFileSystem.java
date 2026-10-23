@@ -40,7 +40,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * This keeps the setup code focused and readable for its standalone purpose.
  */
 
-public class SetOrderFileSystem {
+public class  SetOrderFileSystem {
 
     private static Path orderCounterPath = StorageLocation.orderCounterPath;
     private static Path[] foldersPaths = {

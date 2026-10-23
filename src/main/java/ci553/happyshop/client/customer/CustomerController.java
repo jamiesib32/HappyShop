@@ -2,6 +2,7 @@ package ci553.happyshop.client.customer;
 
 public class CustomerController {
     public CustomerModel cusModel;
+    public Music music;
 
     public void doAction(String action) {
         switch (action) {
@@ -16,11 +17,17 @@ public class CustomerController {
                 break;
             case "Check Out":
                 cusModel.checkOut();
+
                 break;
             case "OK & Close":
                 cusModel.closeReceipt();
+
                 break;
         }
+
     }
 
+
 }
+
+

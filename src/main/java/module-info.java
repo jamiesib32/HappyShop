@@ -2,6 +2,7 @@ module ci553.happyshop {
     requires javafx.controls;
     requires java.sql;
     requires javafx.graphics;
+    requires java.desktop;
 
     // Uncomment the following line when running tests in IntelliJ:
     // requires org.junit.jupiter.api;

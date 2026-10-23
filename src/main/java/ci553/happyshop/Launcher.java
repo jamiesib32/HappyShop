@@ -13,13 +13,18 @@ import javafx.application.Application;
  */
 
 public class Launcher  {
+
+
+
+
     /**
      * The main method to start the full system.
      * It launches the Main JavaFX application.
      * @param args Command line arguments.
      */
     public static void main(String[] args) {
-        Application.launch(Main.class, args);  // Starts the JavaFX application through Main
+        Application.launch(Main.class, args);
+        // Starts the JavaFX application through Main
     }
 }
 
