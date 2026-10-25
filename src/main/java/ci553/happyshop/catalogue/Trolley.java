@@ -61,18 +61,23 @@ public class Trolley {
      */
     public void addProduct(Product product)
     {
+        //for each loop searches through each product
         for(Product p : products){
             if(p.getProductId().equals(product.getProductId())){
+                //finds if product id is the same as a previous product entered
                 p.setOrderedQuantity(p.getOrderedQuantity()+product.getOrderedQuantity());
+                //sets ordered quantity so product quantity is correctly shown
                 return;
             }
         }
+        //creating a copy of the product with constructor
         Product copy = new Product(product.getProductId(),
                 product.getProductDescription(),
                 product.getUnitPrice(),
                 product.getOrderedQuantity());
          products.add(copy);
         Collections.sort(products);
+        //sorts the products by product id
 
     }
 
