@@ -1,5 +1,10 @@
 package ci553.happyshop.client.customer;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
+
 public class CustomerController {
     public CustomerModel cusModel;
     public Music music;
@@ -8,15 +13,19 @@ public class CustomerController {
         switch (action) {
             case "Search":
                 cusModel.search();
+                playSound();
                 break;
             case "Add to Trolley":
                 cusModel.addToTrolley();
+                playSound();
                 break;
             case "Cancel":
                 cusModel.cancel();
+                playSound();
                 break;
             case "Check Out":
                 cusModel.checkOut();
+                playSound();
 
                 break;
             case "OK & Close":
@@ -25,6 +34,23 @@ public class CustomerController {
                 break;
         }
 
+    }
+    public void playSound()
+    {
+        try {
+            File file = new File("soundreality-bell-sound-effect-613873.wav");
+            //file path for sound
+            AudioInputStream audio = AudioSystem.getAudioInputStream(file);
+            //opens audio system and finds filepath
+            Clip clip = AudioSystem.getClip();
+            clip.open(audio);
+            //opens clip and finds audio system
+            clip.start();
+            //plays sound
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            //catches exceptions
+        }
     }
 
 

@@ -3,6 +3,7 @@ package ci553.happyshop.client.customer;
 import ci553.happyshop.catalogue.Order;
 import ci553.happyshop.catalogue.Product;
 import ci553.happyshop.catalogue.Trolley;
+import ci553.happyshop.client.warehouse.HistoryWindow;
 import ci553.happyshop.storageAccess.DatabaseRW;
 import ci553.happyshop.orderManagement.OrderHub;
 import ci553.happyshop.utility.StorageLocation;
@@ -39,7 +40,10 @@ public class CustomerModel {
     private String receiptContentsText = "";
                  // Textual representation of the generated receipt after checkout,
                 // used for display in the Receipt page
-
+    private String alertmsg;
+    private ArrayList<String> successHistoryRecords = new ArrayList<>();
+    public HistoryWindow successHistoryWindow;
+    private RemoveProductNotifier notifier;
     // Dependency Injection via constructor
     public CustomerModel(DatabaseRW databaseRW){
         this.databaseRW = databaseRW;
@@ -132,8 +136,17 @@ public class CustomerModel {
                 // 2. Trigger a message window to notify the customer about the insufficient stock, rather than directly changing displayLaSearchResult.
                 //You can use the provided RemoveProductNotifier class and its showRemovalMsg method for this purpose.
                 //remember close the message window where appropriate (using method closeNotifierWindow() of RemoveProductNotifier class)
-                searchResultProductText = "Checkout failed due to insufficient stock for the following products:\n" + errorMsg.toString();
-                System.out.println("stock is not enough");
+
+                for (Product p : insufficientProducts) {
+                    trolley.getProducts().removeIf(t -> t.getProductId().equals(p.getProductId()));
+                }
+                trolleyContentsText = ProductListFormatter.buildString(trolley.getProducts());
+
+
+                if (notifier != null) notifier.closeNotifierWindow();
+                notifier = new RemoveProductNotifier();
+                notifier.showRemovalMsg(errorMsg.toString());
+
             }
         }
         else{

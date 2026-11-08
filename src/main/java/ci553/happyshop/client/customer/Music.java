@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.File;
 import java.io.IOException;
 
-public class Music {
+public class  Music {
 
     Clip clip;
     AudioInputStream audioInputStream;
