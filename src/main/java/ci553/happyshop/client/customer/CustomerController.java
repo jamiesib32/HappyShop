@@ -49,6 +49,7 @@ public class CustomerController {
             //plays sound
         } catch (Exception ex) {
             ex.printStackTrace();
+            System.out.println("error");
             //catches exceptions
         }
     }
