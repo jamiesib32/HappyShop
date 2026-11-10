@@ -1,6 +1,7 @@
 package ci553.happyshop;
 
 import ci553.happyshop.client.Main;
+import ci553.happyshop.client.customer.CustomerController;
 import javafx.application.Application;
 
 /**
@@ -23,8 +24,12 @@ public class Launcher  {
      * @param args Command line arguments.
      */
     public static void main(String[] args) {
+        CustomerController cusController = new CustomerController();
+        cusController.playMusic();
+        //attaches to customer controller
+        //calls playMusic method
         Application.launch(Main.class, args);
-        // Starts the JavaFX application through Main
+
     }
 }
 

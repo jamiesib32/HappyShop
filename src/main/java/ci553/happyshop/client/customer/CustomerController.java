@@ -7,9 +7,11 @@ import java.io.File;
 
 public class CustomerController {
     public CustomerModel cusModel;
-    public Music music;
+
+
 
     public void doAction(String action) {
+
         switch (action) {
             case "Search":
                 cusModel.search();
@@ -28,11 +30,15 @@ public class CustomerController {
                 playSound();
 
                 break;
+
+
             case "OK & Close":
                 cusModel.closeReceipt();
 
                 break;
+
         }
+
 
     }
     public void playSound()
@@ -53,6 +59,27 @@ public class CustomerController {
             //catches exceptions
         }
     }
+    public void playMusic()
+    {
+        try {
+            File file = new File("alex-morgan-elevator-music-on-hold-583285.wav");
+            //file path for sound
+            AudioInputStream audio = AudioSystem.getAudioInputStream(file);
+            //opens audio system and finds filepath
+            Clip clip = AudioSystem.getClip();
+            clip.open(audio);
+            //opens clip and finds audio system
+            clip.start();
+            //plays sound
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("error");
+            //catches exceptions
+        }
+
+    }
+
+
 
 
 }
