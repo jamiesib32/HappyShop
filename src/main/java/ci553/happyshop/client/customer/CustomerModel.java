@@ -43,7 +43,8 @@ public class CustomerModel {
     private String alertmsg;
     private ArrayList<String> successHistoryRecords = new ArrayList<>();
     public HistoryWindow successHistoryWindow;
-    private RemoveProductNotifier notifier;
+
+    private RemoveProductNotifier removeProductNotifier;
     // Dependency Injection via constructor
     public CustomerModel(DatabaseRW databaseRW){
         this.databaseRW = databaseRW;
@@ -94,41 +95,53 @@ public class CustomerModel {
         updateView();
     }
 
-    public void checkOut()  {
-        if(!trolley.getProducts().isEmpty()){
-            // Group the products in the trolley by productId to optimize stock checking
-            // Check the database for sufficient stock for all products in the trolley.
-            // If any products are insufficient, the update will be rolled back.
-            // If all products are sufficient, the database will be updated, and insufficientProducts will be empty.
-            // Note: If the trolley is already organized (merged and sorted), grouping is unnecessary.
-            ArrayList<Product> groupedProducts= groupProductsById(trolley.getProducts());
-            ArrayList<Product> insufficientProducts= databaseRW.purchaseStocks(groupedProducts);
+    public void checkOut()
+    {
 
-            if(insufficientProducts.isEmpty()){ // If stock is sufficient for all products
-                //get OrderHub and tell it to make a new Order
-                OrderHub orderHub =OrderHub.getOrderHub();
-                Order theOrder = orderHub.newOrder(trolley.getProducts());
-                trolley.clear();
-                trolleyContentsText ="";
-                searchResult = null;
-                searchResultProductText ="Thank you for shopping with us.";
-                receiptContentsText = String.format(
-                        "Order_ID: %s\nOrdered_Date_Time: %s\n%s",
-                        theOrder.getOrderId(),
-                        theOrder.getOrderedDateTime(),
-                        ProductListFormatter.buildString(theOrder.getProductList())
-                );
-                System.out.println(receiptContentsText);
+
+        ArrayList<String> removalMessages = new ArrayList<>();
+        ArrayList<Product> toRemove = new ArrayList<>();
+        ArrayList<Product> items = trolley.getProducts();
+        //attach to arrays and method
+
+        for (Product p : items)
+        {
+            Product inStock = databaseRW.searchProductById(p.getProductId());
+            int available = (inStock == null) ? 0 : inStock.getStockQuantity(); //if in stock is null set available to 0 if not get quantity
+            if (p.getOrderedQuantity() > available)
+            {
+                removalMessages.add(String.format("\u2022 %s. %s (Only %d available, %d requested)",
+                        p.getProductId(), p.getProductDescription(),
+                        available, p.getOrderedQuantity()));
+                toRemove.add(p);
             }
-            else{ // Some products have insufficient stock — build an error message to inform the customer
-                StringBuilder errorMsg = new StringBuilder();
-                for(Product p : insufficientProducts){
-                    errorMsg.append("\u2022 "+ p.getProductId()).append(", ")
-                            .append(p.getProductDescription()).append(" (Only ")
-                            .append(p.getStockQuantity()).append(" available, ")
-                            .append(p.getOrderedQuantity()).append(" requested)\n");
-                }
-                searchResult =null;
+        }
+
+
+        items.removeAll(toRemove);
+
+        if (!removalMessages.isEmpty()) {
+            if (removeProductNotifier == null) {
+                removeProductNotifier = new RemoveProductNotifier();
+                removeProductNotifier.cusView = cusView;
+            }
+            String msg = "The following items have been removed due to insufficient stock:\n"
+                    + String.join("\n", removalMessages);
+            removeProductNotifier.showRemovalMsg(msg);
+            trolleyContentsText = ProductListFormatter.buildString(items);
+            return;
+        }
+
+
+        closeNotifierWindow();
+    }
+
+    private void closeNotifierWindow() {
+        if (removeProductNotifier != null) {
+            removeProductNotifier.closeNotifierWindow();
+        }
+
+
 
                 //TODO
                 // Add the following logic here:
@@ -137,23 +150,7 @@ public class CustomerModel {
                 //You can use the provided RemoveProductNotifier class and its showRemovalMsg method for this purpose.
                 //remember close the message window where appropriate (using method closeNotifierWindow() of RemoveProductNotifier class)
 
-                for (Product p : insufficientProducts) {
-                    trolley.getProducts().removeIf(t -> t.getProductId().equals(p.getProductId()));
-                }
-                trolleyContentsText = ProductListFormatter.buildString(trolley.getProducts());
 
-
-                if (notifier != null) notifier.closeNotifierWindow();
-                notifier = new RemoveProductNotifier();
-                notifier.showRemovalMsg(errorMsg.toString());
-
-            }
-        }
-        else{
-            trolleyContentsText = "Your trolley is empty";
-            System.out.println("Your trolley is empty");
-        }
-        updateView();
     }
 
     /**
