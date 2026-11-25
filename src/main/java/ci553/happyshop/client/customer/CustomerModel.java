@@ -110,30 +110,32 @@ public class CustomerModel {
             int available = (inStock == null) ? 0 : inStock.getStockQuantity(); //if in stock is null set available to 0 if not get quantity
             if (p.getOrderedQuantity() > available)
             {
-                removalMessages.add(String.format("\u2022 %s. %s (Only %d available, %d requested)",
-                        p.getProductId(), p.getProductDescription(),
+                removalMessages.add(String.format("\u2022 %s. %s (Only %d available, %d requested)", //attaches to uni code for the window
+                        p.getProductId(), p.getProductDescription(), //gets product id and description
                         available, p.getOrderedQuantity()));
                 toRemove.add(p);
             }
         }
 
 
-        items.removeAll(toRemove);
+        items.removeAll(toRemove); //removes anything added to toRemove
 
-        if (!removalMessages.isEmpty()) {
-            if (removeProductNotifier == null) {
-                removeProductNotifier = new RemoveProductNotifier();
+        if (!removalMessages.isEmpty())
+        {
+            if (removeProductNotifier == null)
+            {
+                removeProductNotifier = new RemoveProductNotifier(); //attaches to remove product notifier
                 removeProductNotifier.cusView = cusView;
             }
             String msg = "The following items have been removed due to insufficient stock:\n"
-                    + String.join("\n", removalMessages);
-            removeProductNotifier.showRemovalMsg(msg);
-            trolleyContentsText = ProductListFormatter.buildString(items);
+                    + String.join("\n", removalMessages); //message for window
+            removeProductNotifier.showRemovalMsg(msg); //displays message
+            trolleyContentsText = ProductListFormatter.buildString(items); //refreshes trolley text
             return;
         }
 
 
-        closeNotifierWindow();
+        closeNotifierWindow(); //closes window
     }
 
     private void closeNotifierWindow() {
